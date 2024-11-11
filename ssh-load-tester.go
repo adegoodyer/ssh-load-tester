@@ -9,12 +9,18 @@ import (
 )
 
 func main() {
+	// Configure server details
 	server := "your_server_ip_or_hostname"
 	port := "22"
 	username := "your_username"
-	password := "wrong_password"
+	password := "wrong_password" // Intentionally incorrect password
 
+	// Set number of login attempts and rate per second
 	attempts := 50
+	ratePerSecond := 5 // Set rate of attempts per second
+
+	// Calculate delay between attempts to match the rate per second
+	delay := time.Second / time.Duration(ratePerSecond)
 
 	// Run the login attempts
 	for i := 0; i < attempts; i++ {
@@ -36,7 +42,7 @@ func main() {
 			log.Printf("Attempt %d succeeded\n", i+1)
 		}
 
-		// Delay between attempts to simulate real-world behavior
-		time.Sleep(500 * time.Millisecond)
+		// Delay between attempts to control the rate
+		time.Sleep(delay)
 	}
 }
