@@ -1,5 +1,6 @@
 # ssh-load-tester
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/adegoodyer/ssh-load-tester.svg)](https://pkg.go.dev/github.com/adegoodyer/ssh-load-tester)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 CLI tool for load testing ssh logins.
