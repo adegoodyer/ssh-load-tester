@@ -36,22 +36,23 @@ func main() {
 	username := "your_username"
 	password := "wrong_password" // Intentionally incorrect password
 
-	// Set number of login attempts and rate per second
-	attempts := 50
-	ratePerSecond := 5 // Set rate of attempts per second
+	// Set duration for the test and rate per second
+	duration := 10 * time.Second // Run for 10 seconds
+	ratePerSecond := 5           // Set rate of attempts per second
 
-	// Calculate the interval for the specified rate per second
+	// Calculate interval between attempts to match the rate per second
 	interval := time.Second / time.Duration(ratePerSecond)
+	endTime := time.Now().Add(duration)
 
 	// Create WaitGroup for managing parallel attempts
 	var wg sync.WaitGroup
 
-	// Run the login attempts in parallel
-	for i := 0; i < attempts; i++ {
+	// Run the login attempts for the specified duration
+	for time.Now().Before(endTime) {
 		wg.Add(1)
 		go attemptLogin(server, port, username, password, &wg)
 
-		// Wait for the next attempt
+		// Wait for the next attempt to control the rate
 		time.Sleep(interval)
 	}
 
