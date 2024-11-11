@@ -14,7 +14,7 @@ go install github.com/adegoodyer/ssh-load-tester@latest
 
 ## Usage
 ```bash
-ssh-load-tester localhost
+ssh-load-tester
 Error: -h flag (host) is required.
 Usage of ssh-load-tester:
   -P string
