@@ -3,10 +3,31 @@ package main
 import (
 	"fmt"
 	"log"
+	"sync"
 	"time"
 
 	"golang.org/x/crypto/ssh"
 )
+
+func attemptLogin(server, port, username, password string, wg *sync.WaitGroup) {
+	defer wg.Done() // Decrement the counter when the goroutine completes
+
+	clientConfig := &ssh.ClientConfig{
+		User: username,
+		Auth: []ssh.AuthMethod{
+			ssh.Password(password),
+		},
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	}
+
+	conn, err := ssh.Dial("tcp", fmt.Sprintf("%s:%s", server, port), clientConfig)
+	if err != nil {
+		log.Println("Login failed:", err)
+		return
+	}
+	conn.Close()
+	log.Println("Login succeeded")
+}
 
 func main() {
 	// Configure server details
@@ -19,30 +40,21 @@ func main() {
 	attempts := 50
 	ratePerSecond := 5 // Set rate of attempts per second
 
-	// Calculate delay between attempts to match the rate per second
-	delay := time.Second / time.Duration(ratePerSecond)
+	// Calculate the interval for the specified rate per second
+	interval := time.Second / time.Duration(ratePerSecond)
 
-	// Run the login attempts
+	// Create WaitGroup for managing parallel attempts
+	var wg sync.WaitGroup
+
+	// Run the login attempts in parallel
 	for i := 0; i < attempts; i++ {
-		// Start SSH connection
-		clientConfig := &ssh.ClientConfig{
-			User: username,
-			Auth: []ssh.AuthMethod{
-				ssh.Password(password),
-			},
-			HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		}
+		wg.Add(1)
+		go attemptLogin(server, port, username, password, &wg)
 
-		// Attempt to connect
-		conn, err := ssh.Dial("tcp", fmt.Sprintf("%s:%s", server, port), clientConfig)
-		if err != nil {
-			log.Printf("Attempt %d failed: %s\n", i+1, err)
-		} else {
-			conn.Close()
-			log.Printf("Attempt %d succeeded\n", i+1)
-		}
-
-		// Delay between attempts to control the rate
-		time.Sleep(delay)
+		// Wait for the next attempt
+		time.Sleep(interval)
 	}
+
+	// Wait for all goroutines to complete
+	wg.Wait()
 }
