@@ -32,7 +32,7 @@ Usage of ssh-load-tester:
         rate of attempts per second (default 5)
 ```
 
-## Samples
+## Examples
 ```bash
 # specify host
 ssh-load-tester -h localhost
