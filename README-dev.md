@@ -9,9 +9,9 @@ go mod tidy
 # get packages
 go get golang.org/x/crypto/ssh
 
-# run
-go run ssh-load-tester
-
 # local install
 go install ssh-load-tester.go
+
+# run
+ssh-load-tester
 ```
